@@ -18,28 +18,57 @@ An umbrella chart is a Helm chart that contains other charts (subcharts) as depe
 ```
 bmg-agent-gateway/
 ├── Chart.yaml              # Umbrella chart metadata and dependencies
-├── values.yaml             # Global configuration values
-├── templates/              # Shared templates (Gateway, Policy)
-│   ├── _helpers.tpl        # Shared helper functions
-│   ├── gateway-policy.yaml # Authentication policy
-│   └── NOTES.txt           # Post-installation notes
+├── Chart.lock              # Helm dependency lock file (generated)
+├── values.yaml             # Base configuration values (shared defaults)
+├── develop.yaml            # Development environment configuration
+├── pre-prod.yaml           # Pre-production environment configuration
+├── prod.yaml               # Production environment configuration
+├── deploy.sh               # Automated deployment script for all environments
+├── .helmignore             # Helm ignore patterns
+├── templates/              # Umbrella chart templates (shared resources)
+│   ├── _helpers.tpl        # Shared Helm helper functions
+│   ├── gateway-policy.yaml # Gateway, HTTPRoutes, and authentication policy
+│   └── NOTES.txt           # Post-deployment notes and access information
 └── charts/                 # Subcharts directory
-    ├── agent/              # Agent subchart
-    │   ├── Chart.yaml
-    │   ├── values.yaml
-    │   └── templates/
-    ├── ui/                 # UI subchart
-    │   ├── Chart.yaml
-    │   ├── values.yaml
-    │   └── templates/
-    ├── mcp-hubspot/        # MCP HubSpot subchart
-    │   ├── Chart.yaml
-    │   ├── values.yaml
-    │   └── templates/
-    └── mcp-mssql/          # MCP MSSQL subchart
-        ├── Chart.yaml
-        ├── values.yaml
-        └── templates/
+    ├── agent-0.1.0.tgz         # Packaged agent subchart (generated)
+    ├── ui-0.1.0.tgz            # Packaged UI subchart (generated)
+    ├── mcp-hubspot-0.1.0.tgz   # Packaged MCP HubSpot subchart (generated)
+    ├── mcp-mssql-0.1.0.tgz     # Packaged MCP MSSQL subchart (generated)
+    ├── agent/              # Agent subchart source
+    │   ├── Chart.yaml      # Agent chart metadata
+    │   ├── values.yaml     # Agent default values
+    │   └── templates/      # Agent Kubernetes manifests
+    │       ├── _helpers.tpl    # Agent-specific helpers
+    │       ├── configmap.yaml  # Agent configuration
+    │       ├── deployment.yaml # Agent deployment
+    │       ├── secret.yaml     # Agent secrets
+    │       └── service.yaml    # Agent service
+    ├── ui/                 # UI subchart source
+    │   ├── Chart.yaml      # UI chart metadata
+    │   ├── values.yaml     # UI default values
+    │   └── templates/      # UI Kubernetes manifests
+    │       ├── _helpers.tpl    # UI-specific helpers
+    │       ├── deployment.yaml # UI deployment
+    │       ├── httproute.yaml  # UI routing
+    │       └── secret.yaml     # UI secrets
+    ├── mcp-hubspot/        # MCP HubSpot subchart source
+    │   ├── Chart.yaml      # MCP HubSpot chart metadata
+    │   ├── values.yaml     # MCP HubSpot default values
+    │   └── templates/      # MCP HubSpot Kubernetes manifests
+    │       ├── _helpers.tpl    # MCP-specific helpers
+    │       ├── backend.yaml    # Agent Gateway backend
+    │       ├── deployment.yaml # MCP HubSpot deployment
+    │       ├── httproute.yaml  # MCP routing
+    │       └── service.yaml    # MCP service
+    └── mcp-mssql/          # MCP MSSQL subchart source
+        ├── Chart.yaml      # MCP MSSQL chart metadata
+        ├── values.yaml     # MCP MSSQL default values
+        └── templates/      # MCP MSSQL Kubernetes manifests
+            ├── _helpers.tpl    # MCP-specific helpers
+            ├── backend.yaml    # Agent Gateway backend
+            ├── deployment.yaml # MCP MSSQL deployment
+            ├── httproute.yaml  # MCP routing
+            └── service.yaml    # MCP service
 ```
 
 ### Components
