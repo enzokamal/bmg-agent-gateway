@@ -2,6 +2,8 @@
 
 This Helm chart deploys the Agent Gateway system, which includes the Agent, UI, MCP HubSpot, MCP MSSQL servers, and the associated Gateway and authentication policies.
 
+**Note**: This is an umbrella chart following Helm best practices. For detailed information about the umbrella chart architecture, installation, and management, see [umbrellachart.md](umbrellachart.md).
+
 ## Helm Chart Overview for Beginners
 
 If you're new to Helm charts, here's a quick introduction to help you understand this deployment:
@@ -156,6 +158,53 @@ kubectl port-forward -n agentgateway-system svc/agentgateway-proxy 8080:8080
 
 # Visit: http://localhost:8080/ui
 ```
+
+## Running the Umbrella Chart
+
+This is an umbrella Helm chart that deploys multiple related components as a single release. The chart includes subcharts for the Agent, UI, MCP HubSpot, and MCP MSSQL components, along with shared Gateway and authentication policies.
+
+### Prerequisites for Running the Chart
+- Ensure all prerequisites listed above are met, including Gateway API, Agent Gateway controller, and external dependencies.
+- Have your custom `values.yaml` file ready with Azure AD credentials, API keys, and database connection details.
+
+### Basic Command to Run the Umbrella Chart
+```bash
+# Navigate to the chart directory
+cd /path/to/bmg-agent-gateway
+
+# Update dependencies (if needed)
+helm dependency update
+
+# Install the umbrella chart with default values
+helm install my-release . --namespace agentgateway-system --create-namespace
+
+# Or install with custom values
+helm install my-release . -f my-values.yaml --namespace agentgateway-system --create-namespace
+```
+
+### Verifying the Deployment
+After installation, verify that all components are running:
+```bash
+# Check pods
+kubectl get pods -n agentgateway-system
+
+# Check services
+kubectl get svc -n agentgateway-system
+
+# Check gateway
+kubectl get gateway -n agentgateway-system
+```
+
+### Accessing the Application
+Once deployed, access the UI through the Gateway:
+```bash
+# Port forward for local access
+kubectl port-forward -n agentgateway-system svc/agentgateway-proxy 8080:8080
+
+# Visit the UI at: http://localhost:8080/ui
+```
+
+For production deployments, configure ingress or load balancer as described in the Post-Installation Steps section.
 
 ## Installing the Chart
 

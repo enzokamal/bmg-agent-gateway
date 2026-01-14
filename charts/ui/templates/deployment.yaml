@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "ui.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "ui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ui.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Values.deployment.name }}
+          image: {{ include "ui.image.repository" . }}:{{ include "ui.image.tag" . }}
+          imagePullPolicy: {{ include "ui.image.pullPolicy" . }}
+          ports:
+            - containerPort: {{ .Values.deployment.port }}
+          env:
+            - name: AZURE_CLIENT_ID
+              value: {{ .Values.azure.clientId }}
+            - name: AZURE_TENANT_ID
+              value: {{ .Values.azure.tenantId }}
+            - name: GATEWAY_URL
+              value: {{ tpl (include "ui.gatewayUrl" .) . }}
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ui.secret.name" . }}
+                  key: AZURE_CLIENT_SECRET
+            - name: REDIRECT_URI
+              value: {{ include "ui.redirectUri" . }}
+            - name: ADK_API
+              value: {{ tpl (include "ui.adkApi" .) . }}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ui.secret.name" . }}
+                  key: SECRET_KEY
+            - name: AZURE_SCOPES
+              value: {{ include "ui.azureScopes" . }}

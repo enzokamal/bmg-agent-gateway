@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "mcp-hubspot.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "mcp-hubspot.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mcp-hubspot.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: mcp-hubspot
+          image: {{ include "mcp-hubspot.image.repository" . }}:{{ include "mcp-hubspot.image.tag" . }}
+          imagePullPolicy: {{ include "mcp-hubspot.image.pullPolicy" . }}

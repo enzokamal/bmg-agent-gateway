@@ -1,0 +1,15 @@
+dependencies:
+- name: agent
+  repository: file://./charts/agent
+  version: 0.1.0
+- name: ui
+  repository: file://./charts/ui
+  version: 0.1.0
+- name: mcp-hubspot
+  repository: file://./charts/mcp-hubspot
+  version: 0.1.0
+- name: mcp-mssql
+  repository: file://./charts/mcp-mssql
+  version: 0.1.0
+digest: sha256:9d8a9834091c166a2cc04af96f96571e4d206974e9309bae0bbdbe4a85799a06
+generated: "2026-01-14T11:34:21.307377799+05:45"

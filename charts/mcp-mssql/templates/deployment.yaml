@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "mcp-mssql.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "mcp-mssql.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mcp-mssql.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: mcp-mssql
+          image: {{ include "mcp-mssql.image.repository" . }}:{{ include "mcp-mssql.image.tag" . }}
+          imagePullPolicy: {{ include "mcp-mssql.image.pullPolicy" . }}
+          env:
+            - name: MSSQL_SERVER
+              value: {{ include "mcp-mssql.mssqlServer" . | quote }}
+            - name: MSSQL_DATABASE
+              value: {{ include "mcp-mssql.mssqlDatabase" . | quote }}
+            - name: MSSQL_PORT
+              value: {{ include "mcp-mssql.mssqlPort" . | quote }}
+            - name: MSSQL_USER
+              value: {{ include "mcp-mssql.mssqlUser" . | quote }}
+            - name: MSSQL_PASSWORD
+              value: {{ include "mcp-mssql.mssqlPassword" . | quote }}

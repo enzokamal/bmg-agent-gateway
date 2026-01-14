@@ -12,18 +12,19 @@ azure:
 
 # Agent Configuration
 agent:
+  namespace: ""  # Will be set by parent
   configMap:
     name: "agent-config"
-    agentMode: "api"  
-    agentPort: "8070" 
-    agentHost: "0.0.0.0"  
+    agentMode: "api"
+    agentPort: "8070"
+    agentHost: "0.0.0.0"
     mcpServersJson: '[{"url":"http://agentgateway-proxy.{{ .Values.namespace }}.svc.cluster.local:8080/mcp/mcp-mssql"}]'
   deployment:
     name: "agent-deployment"
     replicas: 1
     image:
       repository: "sawnjordan/multi-agent"
-      tag: "v0.8"  
+      tag: "v0.8"
       pullPolicy: "IfNotPresent"
     ports:
       - containerPort: 8000
@@ -35,10 +36,14 @@ agent:
     targetPort: 8070
   secret:
     name: "agent-secrets"
-    deepseekApiKey: ""  
+    deepseekApiKey: ""
 
 # UI Configuration
 ui:
+  namespace: ""  # Will be set by parent
+  azure:
+    clientId: ""  # Will be set by parent
+    tenantId: ""  # Will be set by parent
   deployment:
     name: "ui"
     replicas: 1
@@ -55,7 +60,7 @@ ui:
   secret:
     name: "ui-secrets"
     azureClientSecret: ""  # REQUIRED: Azure Client Secret
-    secretKey: "hello world"  # REQUIRED: Flask Secret Key 
+    secretKey: "hello world"  # REQUIRED: Flask Secret Key
   service:
     name: "ui-service"
     port: 5000
@@ -65,6 +70,7 @@ ui:
 
 # MCP HubSpot Configuration
 mcpHubspot:
+  namespace: ""  # Will be set by parent
   backend:
     name: "mcp-hubspot-backend"
     targetName: "mcp-hubspot-target"
@@ -87,6 +93,7 @@ mcpHubspot:
 
 # MCP MSSQL Configuration
 mcpMssql:
+  namespace: ""  # Will be set by parent
   backend:
     name: "mcp-mssql-backend"
     targetName: "mcp-mssql-target"
@@ -101,11 +108,11 @@ mcpMssql:
       pullPolicy: "Always"
     env:
       # All MSSQL values are REQUIRED
-      mssqlServer: "my-mssqlserver-2022"  
-      mssqlDatabase: "msdb"  
-      mssqlPort: "1433"  
-      mssqlUser: "sa"  
-      mssqlPassword: "kjfkldja;flk"  
+      mssqlServer: "my-mssqlserver-2022"
+      mssqlDatabase: "msdb"
+      mssqlPort: "1433"
+      mssqlUser: "sa"
+      mssqlPassword: "kjfkldja;flk"
   service:
     name: "mcp-mssql-service"
     port: 8000

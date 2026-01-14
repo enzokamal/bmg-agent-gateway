@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "agent.configMap.name" . }}
+  namespace: {{ .Values.namespace }}
+data:
+  AGENT_MODE: {{ include "agent.agentMode" . | quote }}
+  AGENT_PORT: {{ include "agent.agentPort" . | quote }}
+  AGENT_HOST: {{ include "agent.agentHost" . | quote }}
+  MCP_SERVERS_JSON: {{ tpl (include "agent.mcpServersJson" .) . | quote }}

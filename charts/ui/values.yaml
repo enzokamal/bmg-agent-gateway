@@ -1,0 +1,34 @@
+# Default values for ui subchart
+
+# Namespace (inherited from parent)
+namespace: ""
+
+# Azure Configuration (inherited from parent)
+azure:
+  clientId: ""
+  tenantId: ""
+
+# UI Configuration
+deployment:
+  name: "ui"
+  replicas: 1
+  image:
+    repository: "kamalberrybytes/adk-web-ui"
+    tag: "v5"
+    pullPolicy: "Always"
+  port: 5000
+  env:
+    redirectUri: "http://localhost:5000/auth/callback"
+    azureScopes: "openid api://11ddc0cd-e6fc-48b6-8832-de61800fb41e/mcp.access"
+    gatewayUrl: "http://agentgateway-proxy.{{ .Values.namespace }}.svc.cluster.local:8080"
+    adkApi: "http://agent-service.{{ .Values.namespace }}.svc.cluster.local:8070"
+secret:
+  name: "ui-secrets"
+  azureClientSecret: ""
+  secretKey: "helloworld"
+service:
+  name: "ui-service"
+  port: 5000
+  targetPort: 5000
+httpRoute:
+  name: "ui"

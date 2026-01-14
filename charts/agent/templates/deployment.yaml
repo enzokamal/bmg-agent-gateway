@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "agent.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "agent.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "agent.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Values.deployment.name }}
+          image: {{ include "agent.image.repository" . }}:{{ include "agent.image.tag" . }}
+          imagePullPolicy: {{ include "agent.image.pullPolicy" . }}
+          ports:
+{{- range .Values.deployment.ports }}
+            - containerPort: {{ .containerPort }}
+{{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "agent.configMap.name" . }}
+            - secretRef:
+                name: {{ include "agent.secret.name" . }}
+      restartPolicy: Always

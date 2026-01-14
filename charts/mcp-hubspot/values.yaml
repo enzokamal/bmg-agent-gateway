@@ -1,0 +1,25 @@
+# Default values for mcp-hubspot subchart
+
+# Namespace (inherited from parent)
+namespace: ""
+
+# MCP HubSpot Configuration
+backend:
+  name: "mcp-hubspot-backend"
+  targetName: "mcp-hubspot-target"
+  host: "mcp-hubspot-service.{{ .Values.namespace }}.svc.cluster.local"
+  protocol: "StreamableHTTP"
+deployment:
+  name: "mcp-hubspot"
+  replicas: 1
+  image:
+    repository: "kamalberrybytes/mcp-hubspot"
+    tag: "latest"
+    pullPolicy: "Always"
+service:
+  name: "mcp-hubspot-service"
+  port: 8000
+  targetPort: 8000
+  appProtocol: "kgateway.dev/mcp"
+httpRoute:
+  name: "mcp-hubspot"
