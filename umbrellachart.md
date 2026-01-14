@@ -80,6 +80,151 @@ bmg-agent-gateway/
 5. **Gateway**: Routes traffic between components and enforces authentication
 6. **Policy**: Azure AD authentication policy for secure access
 
+## Helm Chart Workflow
+
+### Chart Processing Flow
+
+The BMG Agent Gateway follows Helm's standard umbrella chart processing workflow:
+
+```
+1. Dependency Resolution ──► 2. Value Merging ──► 3. Template Rendering ──► 4. Manifest Generation
+```
+
+#### 1. Dependency Resolution (`Chart.yaml`)
+- Helm reads `Chart.yaml` and resolves subchart dependencies
+- Downloads or uses local subchart packages (`.tgz` files in `charts/` directory)
+- Validates dependency versions and compatibility
+
+#### 2. Value Merging Hierarchy
+Values are merged in this priority order (highest to lowest):
+```
+Environment Values (prod.yaml) > Base Values (values.yaml) > Subchart Defaults
+```
+
+**Global Values Flow**:
+- Values under `global:` in parent charts are automatically available to all subcharts
+- Subcharts access global values via `.Values.global.*`
+- Example: `global.namespace` is accessible in all subchart templates
+
+**Subchart Value Override**:
+- Parent chart values override subchart defaults
+- Key names must match dependency names (e.g., `mcp-hubspot:`, not `mcpHubspot:`)
+
+#### 3. Template Rendering Process
+Each template goes through:
+```
+Template Source ──► Helm Templating Engine ──► Variable Substitution ──► Final Manifest
+```
+
+**Helper Functions (`_helpers.tpl`)**:
+- Define reusable template functions and variables
+- Located in both umbrella (`templates/_helpers.tpl`) and subchart directories
+- Provide logical operations and naming conventions
+
+**Key Helper Functions**:
+```yaml
+# Naming helpers
+{{ include "bmg-agent-gateway.fullname" . }}
+{{ include "agent.fullname" . }}
+
+# Label helpers
+{{ include "bmg-agent-gateway.labels" . }}
+{{ include "agent.selectorLabels" . }}
+
+# Image helpers
+{{ include "agent.image.repository" . }}:{{ include "agent.image.tag" . }}
+```
+
+#### 4. Manifest Generation
+- Templates are rendered into Kubernetes manifests
+- Resources are created in the specified namespace
+- Custom resources (Gateway API, Agent Gateway) are deployed alongside standard K8s resources
+
+### Template Logic and Helpers
+
+#### Umbrella Chart Helpers (`templates/_helpers.tpl`)
+```yaml
+{{/*
+Common labels
+*/}}
+{{- define "bmg-agent-gateway.labels" -}}
+helm.sh/chart: {{ include "bmg-agent-gateway.chart" . }}
+{{ include "bmg-agent-gateway.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "bmg-agent-gateway.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "bmg-agent-gateway.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+```
+
+#### Subchart Helpers (Example: `charts/agent/templates/_helpers.tpl`)
+```yaml
+{{/*
+Agent fullname
+*/}}
+{{- define "agent.fullname" -}}
+{{- if .Values.fullnameOverride }}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Agent image
+*/}}
+{{- define "agent.image.repository" -}}
+{{- .Values.image.repository }}
+{{- end }}
+```
+
+### Value Inheritance Examples
+
+#### Global Namespace Propagation
+```yaml
+# In develop.yaml
+global:
+  namespace: "bmg-develop"
+
+# Accessible in any subchart template as:
+metadata:
+  namespace: {{ .Values.global.namespace | default "default" }}
+```
+
+#### Environment-Specific Scaling
+```yaml
+# In prod.yaml
+mcp-hubspot:
+  deployment:
+    replicas: 3
+
+# Overrides subchart default in charts/mcp-hubspot/values.yaml
+# replicas: 1 → replicas: 3
+```
+
+### Deployment Sequence
+
+1. **Pre-deployment**: `helm dependency update` packages subcharts
+2. **Value Resolution**: Environment file + base values merged
+3. **Template Rendering**: All templates processed with merged values
+4. **Resource Creation**: Manifests applied to Kubernetes in dependency order
+5. **Post-deployment**: Hooks and validation executed
+
+This workflow ensures consistent, reproducible deployments across all environments while maintaining modularity and reusability.
+
 ## Prerequisites
 
 Before running the umbrella chart, ensure your Kubernetes cluster meets these requirements:

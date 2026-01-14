@@ -96,7 +96,7 @@ mcp-mssql:
     replicas: 3  # Production high availability
     image:
       repository: "kamalberrybytes/mssql-mcp"
-      tag: "latest"  # Override in environment files
+      tag: "v1"  # Override in environment files
       pullPolicy: "Always"
     env:
       # These must be set in environment-specific files
