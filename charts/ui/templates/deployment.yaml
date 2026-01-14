@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.deployment.name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace | default "default" }}
   labels:
     {{- include "ui.labels" . | nindent 4 }}
 spec:
@@ -23,9 +23,9 @@ spec:
             - containerPort: {{ .Values.deployment.port }}
           env:
             - name: AZURE_CLIENT_ID
-              value: {{ .Values.azure.clientId }}
+              value: {{ .Values.global.azure.clientId }}
             - name: AZURE_TENANT_ID
-              value: {{ .Values.azure.tenantId }}
+              value: {{ .Values.global.azure.tenantId }}
             - name: GATEWAY_URL
               value: {{ tpl (include "ui.gatewayUrl" .) . }}
             - name: AZURE_CLIENT_SECRET

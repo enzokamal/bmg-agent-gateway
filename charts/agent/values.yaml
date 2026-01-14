@@ -1,7 +1,6 @@
 # Default values for agent subchart
 
 # Namespace (inherited from parent)
-namespace: ""
 
 # Agent Configuration
 configMap:
@@ -9,7 +8,7 @@ configMap:
   agentMode: "api"
   agentPort: "8070"
   agentHost: "0.0.0.0"
-  mcpServersJson: '[{"url":"http://agentgateway-proxy.{{ .Values.namespace }}.svc.cluster.local:8080/mcp/mcp-mssql"}]'
+  mcpServersJson: '[{"url":"http://agentgateway-proxy.{{ .Values.global.namespace }}.svc.cluster.local:8080/mcp/mcp-mssql"}]'
 deployment:
   name: "agent-deployment"
   replicas: 1

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.service.name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace | default "default" }}
   labels:
     {{- include "mcp-hubspot.labels" . | nindent 4 }}
 spec:

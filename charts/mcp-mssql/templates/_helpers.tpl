@@ -21,23 +21,23 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 MCP MSSQL required values
 */}}
 {{- define "mcp-mssql.mssqlServer" -}}
-{{- required "mssqlServer is required in values.yaml" .Values.deployment.env.mssqlServer -}}
+{{- required "mssqlServer is required - set it in your environment values file (develop.yaml, pre-prod.yaml, or prod.yaml)" .Values.deployment.env.mssqlServer -}}
 {{- end }}
 
 {{- define "mcp-mssql.mssqlDatabase" -}}
-{{- required "mssqlDatabase is required in values.yaml" .Values.deployment.env.mssqlDatabase -}}
+{{- required "mssqlDatabase is required - set it in your environment values file (develop.yaml, pre-prod.yaml, or prod.yaml)" .Values.deployment.env.mssqlDatabase -}}
 {{- end }}
 
 {{- define "mcp-mssql.mssqlPort" -}}
-{{- required "mssqlPort is required in values.yaml" (.Values.deployment.env.mssqlPort | toString) -}}
+{{- required "mssqlPort is required - set it in your environment values file (develop.yaml, pre-prod.yaml, or prod.yaml)" (.Values.deployment.env.mssqlPort | toString) -}}
 {{- end }}
 
 {{- define "mcp-mssql.mssqlUser" -}}
-{{- required "mssqlUser is required in values.yaml" .Values.deployment.env.mssqlUser -}}
+{{- required "mssqlUser is required - set it in your environment values file (develop.yaml, pre-prod.yaml, or prod.yaml)" .Values.deployment.env.mssqlUser -}}
 {{- end }}
 
 {{- define "mcp-mssql.mssqlPassword" -}}
-{{- required "mssqlPassword is required in values.yaml" .Values.deployment.env.mssqlPassword -}}
+{{- required "mssqlPassword is required - set it in your environment values file (develop.yaml, pre-prod.yaml, or prod.yaml)" .Values.deployment.env.mssqlPassword -}}
 {{- end }}
 
 {{- define "mcp-mssql.image.repository" -}}

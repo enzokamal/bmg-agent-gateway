@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.deployment.name }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.global.namespace | default "default" }}
   labels:
     {{- include "mcp-mssql.labels" . | nindent 4 }}
 spec:
@@ -21,12 +21,12 @@ spec:
           imagePullPolicy: {{ include "mcp-mssql.image.pullPolicy" . }}
           env:
             - name: MSSQL_SERVER
-              value: {{ include "mcp-mssql.mssqlServer" . | quote }}
+              value: {{ .Values.deployment.env.mssqlServer | quote }}
             - name: MSSQL_DATABASE
-              value: {{ include "mcp-mssql.mssqlDatabase" . | quote }}
+              value: {{ .Values.deployment.env.mssqlDatabase | quote }}
             - name: MSSQL_PORT
-              value: {{ include "mcp-mssql.mssqlPort" . | quote }}
+              value: {{ .Values.deployment.env.mssqlPort | quote }}
             - name: MSSQL_USER
-              value: {{ include "mcp-mssql.mssqlUser" . | quote }}
+              value: {{ .Values.deployment.env.mssqlUser | quote }}
             - name: MSSQL_PASSWORD
-              value: {{ include "mcp-mssql.mssqlPassword" . | quote }}
+              value: {{ .Values.deployment.env.mssqlPassword | quote }}

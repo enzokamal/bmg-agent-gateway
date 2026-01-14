@@ -1,7 +1,6 @@
 # Default values for mcp-hubspot subchart
 
 # Namespace (inherited from parent)
-namespace: ""
 
 # MCP HubSpot Configuration
 backend:

@@ -1,7 +1,6 @@
 # Default values for mcp-mssql subchart
 
 # Namespace (inherited from parent)
-namespace: ""
 
 # MCP MSSQL Configuration
 backend:
