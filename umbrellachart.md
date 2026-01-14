@@ -143,6 +143,14 @@ The configurations now properly follow the environment promotion workflow:
 - **Pre-Prod**: 2 replicas per component for HA testing, `bmg-pre-prod` namespace
 - **Prod**: 3 replicas per component for production HA, stable configs, `bmg-prod` namespace
 
+### Subchart Naming Convention Fix
+
+Fixed subchart value key names to match Helm dependency names:
+- `mcpHubspot` → `mcp-hubspot`
+- `mcpMssql` → `mcp-mssql`
+
+This ensures replica scaling works correctly for all MCP components.
+
 ### Deployment Impact
 
 These changes ensure that:

@@ -68,7 +68,7 @@ ui:
     name: "ui"
 
 # MCP HubSpot Configuration
-mcpHubspot:
+mcp-hubspot:
   deployment:
     name: "mcp-hubspot"
     replicas: 2  # High availability testing
@@ -90,7 +90,7 @@ mcpHubspot:
     name: "mcp-hubspot"
 
 # MCP MSSQL Configuration
-mcpMssql:
+mcp-mssql:
   deployment:
     name: "mcp-mssql"
     replicas: 2  # High availability testing
