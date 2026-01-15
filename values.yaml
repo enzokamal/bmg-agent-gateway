@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Namespace for deployment (defaults to default)
-namespace: "production"
+namespace: "agent"
 
 # Azure Configuration (shared) - REQUIRED
 azure:
@@ -35,7 +35,7 @@ agent:
     targetPort: 8070
   secret:
     name: "agent-secrets"
-    deepseekApiKey: ""  
+    deepseekApiKey: ""
 
 # UI Configuration
 ui:
@@ -43,8 +43,8 @@ ui:
     name: "ui"
     replicas: 1
     image:
-      repository: "kamalberrybytes/adk-web-ui"
-      tag: "v5"
+      repository: "sawnjordan/agent-ui"
+      tag: "v0.11"
       pullPolicy: "Always"
     port: 5000
     env:

@@ -15,6 +15,19 @@ spec:
       labels:
         {{- include "agent.selectorLabels" . | nindent 8 }}
     spec:
+      initContainers:
+        - name: fix-sqlite-permissions
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /data && \
+              chown -R 1000:1000 /data && \
+              chmod -R 775 /data
+          volumeMounts:
+            - name: sqlite-volume
+              mountPath: /data
       containers:
         - name: {{ .Values.agent.deployment.name }}
           image: {{ include "bmg-agent-gateway.agent.image.repository" . }}:{{ include "bmg-agent-gateway.agent.image.tag" . }}
@@ -28,6 +41,14 @@ spec:
                 name: {{ include "bmg-agent-gateway.agent.configMap.name" . }}
             - secretRef:
                 name: {{ include "bmg-agent-gateway.agent.secret.name" . }}
+          volumeMounts:
+            - name: sqlite-volume
+              mountPath: /data  # Container path for DB
+      volumes:
+        - name: sqlite-volume
+          hostPath:
+            path: /tmp/chat-app
+            type: DirectoryOrCreate
       restartPolicy: Always
 ---
 apiVersion: v1
@@ -39,6 +60,7 @@ data:
   AGENT_MODE: {{ include "bmg-agent-gateway.agent.agentMode" . | quote }}
   AGENT_PORT: {{ include "bmg-agent-gateway.agent.agentPort" . | quote }}
   AGENT_HOST: {{ include "bmg-agent-gateway.agent.agentHost" . | quote }}
+  SESSION_SERVICE_URI: sqlite:////data/chat_sessions.db
   MCP_SERVERS_JSON: {{ tpl (include "bmg-agent-gateway.agent.mcpServersJson" .) . | quote }}
 ---
 apiVersion: v1
